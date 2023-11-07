@@ -1,0 +1,70 @@
+[gd_scene load_steps=8 format=3 uid="uid://c2kyq7tf2ibq3"]
+
+[ext_resource type="Texture2D" uid="uid://dfxxtfd5w02aq" path="res://TitleScreenBackground.webp" id="1_68uus"]
+[ext_resource type="Script" path="res://TitleScreen.gd" id="1_ay3x4"]
+[ext_resource type="Texture2D" uid="uid://cx3imvq1e6gmt" path="res://PlayButton.png" id="2_00cnn"]
+[ext_resource type="AudioStream" uid="uid://d2bche3h61l7m" path="res://TitleScreenMusic.ogg" id="4_gcvju"]
+[ext_resource type="Theme" uid="uid://c0jd4tgm6v8dv" path="res://Theme.tres" id="4_oya77"]
+
+[sub_resource type="Animation" id="Animation_en3t6"]
+resource_name = "Animate"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Play:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 1.2, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.261719, 0.261719), Vector2(0.28, 0.28), Vector2(0.261719, 0.261719)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6ucfs"]
+_data = {
+"Animate": SubResource("Animation_en3t6")
+}
+
+[node name="TitleScreen" type="Node2D"]
+script = ExtResource("1_ay3x4")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(966, 552)
+scale = Vector2(1.07812, 1.07813)
+texture = ExtResource("1_68uus")
+
+[node name="PlayButton" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0)
+offset_left = 864.0
+offset_top = 792.0
+offset_right = 1088.0
+offset_bottom = 1016.0
+
+[node name="Play" type="Sprite2D" parent="."]
+position = Vector2(1696, 888)
+scale = Vector2(0.261719, 0.261719)
+texture = ExtResource("2_00cnn")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Play"]
+root_node = NodePath("../..")
+autoplay = "Animate"
+libraries = {
+"": SubResource("AnimationLibrary_6ucfs")
+}
+
+[node name="CopyrightNotice" type="Label" parent="."]
+offset_left = 16.0
+offset_top = 1056.0
+offset_right = 852.0
+offset_bottom = 1092.0
+theme = ExtResource("4_oya77")
+text = "Copyright 2023 by Oak Mgt BV - Created by Koen van Eijk"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_gcvju")
+autoplay = true
+
+[connection signal="button_up" from="PlayButton" to="." method="_on_play_button_button_up"]

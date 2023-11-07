@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://ru6rwui4qf5r"]
+
+[ext_resource type="Script" path="res://Card.gd" id="1_lh8te"]
+[ext_resource type="AudioStream" uid="uid://bhsnqow3cm5j1" path="res://FlipCard.wav" id="2_ejh5q"]
+
+[node name="Card" type="TextureButton"]
+offset_right = 1024.0
+offset_bottom = 1024.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ignore_texture_size = true
+stretch_mode = 0
+script = ExtResource("1_lh8te")
+
+[node name="FlipSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_ejh5q")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]
