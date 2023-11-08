@@ -38,13 +38,11 @@ texture = ExtResource("1_68uus")
 
 [node name="PlayButton" type="Button" parent="."]
 modulate = Color(1, 1, 1, 0)
-offset_left = 864.0
-offset_top = 792.0
-offset_right = 1088.0
-offset_bottom = 1016.0
+offset_right = 1936.0
+offset_bottom = 1104.0
 
 [node name="Play" type="Sprite2D" parent="."]
-position = Vector2(1696, 888)
+position = Vector2(1032, 856)
 scale = Vector2(0.261719, 0.261719)
 texture = ExtResource("2_00cnn")
 

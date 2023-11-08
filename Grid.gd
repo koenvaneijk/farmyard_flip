@@ -3,106 +3,115 @@ extends GridContainer
 var matched_cards = []
 var flipped_cards = []
 
+var enabled = true
+
 @export var width = 4
 @export var height = 3
 
-func shuffle():
+func shuffle_cards():
+	# Shuffle the cards
 	var children = get_children()
 	var children_list = children.duplicate()
+	
 	children_list.shuffle()
+	
 	for child in children:
 		remove_child(child)
+	
 	for child in children_list:
 		add_child(child)
-		
-	for child in get_children():
-		if child is TextureButton:
-			child.reset()
-		
 	
-func disable():
 	for child in get_children():
-		if child is TextureButton:
-			child.disabled = true
-		
-func enable():
-	for child in get_children():
-		if child is TextureButton:
-			child.disabled = false
+		if child is Card:
+			child.reset()
 			
+func new_game():
+	for child in get_children():
+		if child is Card:
+			child.free()
+	
+	create_cards()
+	shuffle_cards()
+
+func handle_card_match(card1, card2):
+	$MatchSound.play()
+	
+	card1.matched()
+	card2.matched()
+	
+	matched_cards.append(card1)
+	matched_cards.append(card2)
+	
+	flipped_cards.clear()
+	
+
+func handle_card_mismatch(card1, card2):
+	$MismatchSound.play()		
+	
+	card1.mismatched()
+	card2.mismatched()
+	
+	flipped_cards.clear()
+
+func create_cards():
+	var dir = DirAccess.open("res://Cards/")
+
+	dir.list_dir_begin()
+	var files = []
+	while true:
+		var file = dir.get_next()
+		if file == "":
+			break
+		elif file.ends_with(".webp"):
+			files.append(file)
+	dir.list_dir_end()
+		
+	for i in range(files.size() - 1, 0, -1):
+		var j = randi() % (i + 1)
+		var temp = files[i]
+		files[i] = files[j]
+		files[j] = temp
+		
+	var CardScene = preload("res://Card.tscn")
+	for i in range(width * height / 2):
+		for _j in range(2): # Two cards for each pair
+			var card = CardScene.instantiate()
+			card.texture_normal = load("res://Cards/" + files[i])
+			card.value = i
+			add_child(card)
+			card.connect("flipped", _on_card_flipped)
 			
 func _on_card_flipped(card):
-	print("Added!")
+	# Add flipped card to stack
 	flipped_cards.append(card)
-	
-	# Check if there are two cards flipped.
+
+	# 2 cards flipped
 	if flipped_cards.size() >= 2:
-		disable()
+		enabled = false
 		
-		# Check if the two cards match.
+		# Match
 		if flipped_cards[0].value == flipped_cards[1].value:
-			print("match!")
-			# Handle the match - keep them face up, disable them, or remove them.
-			#handle_match(flipped_cards[0], flipped_cards[1])
-			flipped_cards[0].matched()
-			flipped_cards[1].matched()
+			handle_card_match(flipped_cards[0], flipped_cards[1])
+			enabled = true
 			
-			flipped_cards.clear()
-			$MatchSound.play()
+		# Mismatch
 		else:
-			# If they don't match, flip them back after a delay.
-			print("no match!")
-			$MismatchSound.play()
-			
+			handle_card_mismatch(flipped_cards[0], flipped_cards[1])
 			await get_tree().create_timer(2.0).timeout # waits for 2 seconds
-			
-			flipped_cards[0].flip()
-			flipped_cards[1].flip()
-			
-			#delay_flip(flipped_cards[0], flipped_cards[1])
-			flipped_cards.clear()
+			enabled = true
 		
-		enable()
-			
+		# Game completed
+		if len(matched_cards) >= (width * height): 
+			$CheerSound.play()
+		
+		return
 
-			
-	
 
-# This assumes you have a method in the Card script to get the value for comparison.
-func handle_match(card1, card2):
-	print("match!")
-
-# Use a timer to delay the flip back action.
-func delay_flip(card1, card2):
-	# Disable further input here if necessary.
-	var timer = Timer.new()
-	timer.wait_time = 1 # 1 second delay
-	timer.one_shot = true
-	add_child(timer)
-	timer.start()
-	await(timer)
-	card1.flip_back()
-	card2.flip_back()
-
-	
 func _ready():
-	connect("flipped", _on_card_flipped)
-	
-	for i in range((width*height/2)):
-		print(i)
-		var CardScene = load("res://Card.tscn")
-		var card1 = CardScene.instantiate()
-		card1.texture_normal = load("res://Cards/"+str(i)+".webp")
-		card1.value = i
-		add_child(card1)
-		card1.connect("flipped", _on_card_flipped)
-		var card2 = CardScene.instantiate()
-		card2.texture_normal = load("res://Cards/"+str(i)+".webp")
-		card2.value = i
-		add_child(card2)
-		card2.connect("flipped", _on_card_flipped)
-		
-	shuffle()
+	new_game()
 
 func _on_button_pressed():
-	shuffle()
+	shuffle_cards()
+
+func _on_button_2_pressed():
+	new_game()

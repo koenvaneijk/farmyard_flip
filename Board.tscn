@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dpxppnxk4grjg"]
+[gd_scene load_steps=7 format=3 uid="uid://dpxppnxk4grjg"]
 
 [ext_resource type="Texture2D" uid="uid://ploi7tcdx5mr" path="res://BoardBackground.png" id="1_ng6p3"]
 [ext_resource type="Script" path="res://Grid.gd" id="2_rv7a0"]
 [ext_resource type="AudioStream" uid="uid://chje2dkl7t7x5" path="res://Mismatch.mp3" id="3_kblih"]
 [ext_resource type="AudioStream" uid="uid://cbmaogiejpcp4" path="res://Match.wav" id="4_awtjo"]
 [ext_resource type="AudioStream" uid="uid://d2bche3h61l7m" path="res://TitleScreenMusic.ogg" id="4_ed3gc"]
+[ext_resource type="AudioStream" uid="uid://c178fq858ga3f" path="res://Cheer.wav" id="5_4j1na"]
 
 [node name="Board" type="Node2D"]
 
@@ -13,30 +14,43 @@ position = Vector2(958.274, 604.75)
 scale = Vector2(1.18517, 1.18517)
 texture = ExtResource("1_ng6p3")
 
-[node name="Grid" type="GridContainer" parent="."]
+[node name="MemoryGrid" type="GridContainer" parent="."]
 clip_contents = true
 custom_minimum_size = Vector2(256, 256)
-offset_left = 176.0
-offset_top = 80.0
-offset_right = 1712.0
-offset_bottom = 952.0
+offset_left = 208.0
+offset_top = 48.0
+offset_right = 1696.0
+offset_bottom = 984.0
 columns = 4
 script = ExtResource("2_rv7a0")
 
-[node name="MismatchSound" type="AudioStreamPlayer2D" parent="Grid"]
+[node name="MismatchSound" type="AudioStreamPlayer2D" parent="MemoryGrid"]
 stream = ExtResource("3_kblih")
 
-[node name="MatchSound" type="AudioStreamPlayer2D" parent="Grid"]
+[node name="MatchSound" type="AudioStreamPlayer2D" parent="MemoryGrid"]
 stream = ExtResource("4_awtjo")
+
+[node name="CheerSound" type="AudioStreamPlayer2D" parent="MemoryGrid"]
+stream = ExtResource("5_4j1na")
 
 [node name="MusicPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_ed3gc")
-volume_db = -11.712
+volume_db = -17.802
 autoplay = true
 
 [node name="Button" type="Button" parent="."]
-offset_right = 8.0
-offset_bottom = 8.0
+offset_left = 32.0
+offset_top = 16.0
+offset_right = 160.0
+offset_bottom = 72.0
 text = "Shuffle"
 
-[connection signal="pressed" from="Button" to="Grid" method="_on_button_pressed"]
+[node name="Button2" type="Button" parent="."]
+offset_left = 208.0
+offset_top = 16.0
+offset_right = 336.0
+offset_bottom = 72.0
+text = "New game"
+
+[connection signal="pressed" from="Button" to="MemoryGrid" method="_on_button_pressed"]
+[connection signal="pressed" from="Button2" to="MemoryGrid" method="_on_button_2_pressed"]
