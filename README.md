@@ -1,6 +1,6 @@
 # Farmyard Flip
 
-This is a prototype project I created with only AI generated assets
+This is a prototype project I created in Godot with only AI generated assets
 
 All images were generated with DALL-E 3, the sound effects with AudioGen and the music with MusicGen.
 
